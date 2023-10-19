@@ -2,10 +2,7 @@ from PIL import Image
 import os
 import time
 
-# Convert encoding data into 8-bit binary
-# form using ASCII value of characters
 def genData(data):
-
 		newd = []
 
 		for i in data:
@@ -13,20 +10,16 @@ def genData(data):
 		return newd
 
 def modPix(pix, data):
-
 	datalist = genData(data)
 	lendata = len(datalist)
 	imdata = iter(pix)
 
 	for i in range(lendata):
 
-		# Extracting 3 pixels at a time
 		pix = [value for value in imdata.__next__()[:3] +
 								imdata.__next__()[:3] +
 								imdata.__next__()[:3]]
 
-		# Pixel value should be made
-		# odd for 1 and even for 0
 		for j in range(0, 8):
 			if (datalist[i][j] == '0' and pix[j]% 2 != 0):
 				pix[j] -= 1
@@ -36,12 +29,7 @@ def modPix(pix, data):
 					pix[j] -= 1
 				else:
 					pix[j] += 1
-				# pix[j] -= 1
 
-		# Eighth pixel of every set tells
-		# whether to stop ot read further.
-		# 0 means keep reading; 1 means thec
-		# message is over.
 		if (i == lendata - 1):
 			if (pix[-1] % 2 == 0):
 				if(pix[-1] != 0):
@@ -64,7 +52,6 @@ def encode_enc(newimg, data):
 
 	for pixel in modPix(newimg.getdata(), data):
 
-		# Putting modified pixels in the new image
 		newimg.putpixel((x, y), pixel)
 		if (x == w - 1):
 			x = 0
@@ -72,28 +59,26 @@ def encode_enc(newimg, data):
 		else:
 			x += 1
 
-# Encode data into image
 def encode():
 	curr_dir = os.path.dirname(os.path.abspath(__file__))
-	img = input("Enter image name(with extension) : ")
+	img = input("Masukan nama file dengan ekstensi : ")
 	img_path = os.path.join(curr_dir, img)
 	image = Image.open(img_path, 'r')
 
-	data = input("Enter data to be encoded : ")
+	data = input("Masukan pesan rahasia : ")
 	if (len(data) == 0):
-		raise ValueError('Data is empty')
+		raise ValueError('Pesan tidak boleh kosong')
 
 	newimg = image.copy()
 	encode_enc(newimg, data)
 
-	new_img_name = input("Enter the name of new image(with extension) : ")
+	new_img_name = input("Masukan nama file baru dengan ekstensi : ")
 	newimg_path = os.path.join(curr_dir, new_img_name)
 	newimg.save(newimg_path, str(new_img_name.split(".")[1].upper()))
 
-# Decode the data in the image
 def decode():
 	curr_dir = os.path.dirname(os.path.abspath(__file__))
-	img = input("Enter image name(with extension) : ")
+	img = input("Masukan nama file dengan ekstensi : ")
 	img_path = os.path.join(curr_dir, img)
 	image = Image.open(img_path, 'r')
 
@@ -105,7 +90,6 @@ def decode():
 								imgdata.__next__()[:3] +
 								imgdata.__next__()[:3]]
 
-		# string of binary data
 		binstr = ''
 
 		for i in pixels[:8]:
@@ -118,7 +102,6 @@ def decode():
 		if (pixels[-1] % 2 != 0):
 			return data
 
-# Main Function
 def main():
 	while True:
 		a = int(input("Silahkan Pilih Fungsi yang Diinginkan\n"
